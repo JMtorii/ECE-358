@@ -1,4 +1,5 @@
 #include <iostream>
+#include <queue>
 #include <random>
 
 using namespace std;
@@ -14,7 +15,7 @@ double probability_packet_loss = 0; // Probability of packet loss (only relevant
 /**
  * Input parameters
  */
-unsigned long ticks = 0; // Simulation length (in ticks)
+unsigned long tick_length = 0; // Simulation length (in ticks)
 double avg_number_packets = 0; // Average packets per second to generate
 unsigned long packet_length = 0; // Length of packets to send (in bits)
 double transmission_rate = 0; // Transmission rate (bits per second)
@@ -78,6 +79,10 @@ void start_simulation(int ticks)
 in queue, average delay in queue and idle time for the server. */
 void compute_performances()
 {
+double average_queue_packets = 0; // Average number of packets in the queue
+double average_sojourn_time = 0; // Queueing delay + Service time
+double proportion_idle = 0; // Proportion of ticks the server is idle
+double probability_packet_loss = 0; // Probability of packet loss (only relevant for M/D/1/K)
 
 }
 
@@ -109,7 +114,7 @@ void main()
 	}
 
 	cout << "Length of simulation, in ticks: ";
-	cin >> ticks;
+	cin >> tick_length;
 	cout << endl;
 
 	cout << "Average number of packets per second generated/arrived: ";
@@ -128,7 +133,7 @@ void main()
 	update_next_tick();
 
 	// Run simulation
-	start_simulation(ticks);
+	start_simulation(tick_length);
 
 	// Process and display results
 	compute_performances();
