@@ -45,11 +45,8 @@ void main()
 	time departure will be called as soon as a packet arrives in the
 	queue*/
 
-
-	unsigned long ticks = 0;
-
 	// Simulation length (in ticks)
-	unsigned long simulation_length = 0;
+	unsigned long ticks = 0;
 
 	// Average packets per second to generate
 	double avg_number_packets = 0;
@@ -83,7 +80,7 @@ void main()
 	}
 
 	cout << "Length of simulation, in ticks: ";
-	cin >> simulation_length;
+	cin >> ticks;
 	cout << endl;
 
 	cout << "Average number of packets per second generated/arrived: ";
