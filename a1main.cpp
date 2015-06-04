@@ -11,7 +11,6 @@ double average_queue_packets = 0; // Average number of packets in the queue
 double average_sojourn_time = 0; // Queueing delay + Service time
 double idle_time = 0;
 double proportion_idle = 0; // Proportion of ticks the server is idle
-double probability_packet_loss = 0; // Probability of packet loss (only relevant for M/D/1/K)
 unsigned long packets_sent = 0;
 unsigned long packets_received = 0;
 
@@ -40,8 +39,10 @@ void update_next_tick(unsigned long t) {
 	//cout << "T_ARRIVAL: " << t_arrival << endl;
 }
 
-/* Generate a packet as per the exponential distribution and insert the
-packet in the queue (an array or a linked list)*/
+/**
+ * Generate a packet as per the exponential distribution and insert the
+ * packet in the queue (an array or a linked list)
+ */
 void arrival(unsigned long t)
 {
 	if (t == t_arrival) {
@@ -60,14 +61,16 @@ void arrival(unsigned long t)
 	}
 }
 
-/* Check the queue for the packet, if head of the queue is empty,
-return 0 else if the queue is non-empty delete the packet from the
-queue after an elapse of the deterministic service time. */
+/**
+ * Check the queue for the packet, if head of the queue is empty,
+ * return 0 else if the queue is non-empty delete the packet from the
+ * queue after an elapse of the deterministic service time.
+ */
 int departure(unsigned long t)
 {
 	if (Queue.empty()) {
 		idle_time++;
-		t_departure++; // Not allowed to process packets we haven't received
+		t_departure = t + service_time; // Not allowed to process packets we haven't received
 		return 0;
 	} else {
 		if (t >= t_departure) {
@@ -109,7 +112,9 @@ void compute_performances()
 			cout << "No packets received." << endl;
 		}
 		else {
-			cout << "Probability of packet loss: " << ((double)packets_sent - packets_received) / (double)packets_sent << endl;
+			cout << "Packets sent: " << packets_sent << endl;
+			cout << "Packets received: " << packets_received << endl;
+			cout << "Probability of packet loss: " << ((double)packets_sent - (double)packets_received) / ((double)packets_sent) << endl;
 		}
 	}
 }
