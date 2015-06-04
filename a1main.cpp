@@ -2,28 +2,56 @@
 
 using namespace std;
 
+void arrival(int t)
+{
+	/* Generate a packet as per the exponential distribution and insert the
+	packet in the queue (an array or a linked list)*/
+}
+
+void departure(int t)
+{
+	/* Check the queue for the packet, if head of the queue is empty,
+	return 0 else if the queue is non-empty delete the packet from the
+	queue after an elapse of the deterministic service time. */
+}
+
+void start_simulation(int ticks)
+{
+	for (int t = 1; t <= ticks; ++t)
+	{
+		arrival(t); /* call the arrival procedure*/
+		departure(t); /*call the departure procedure*/
+	}
+}
+
+void compute_performances()
+{
+	/*Calculate and display the results such as average number of packets
+	in queue, average delay in queue and idle time for the server. */
+}
+
 void main()
 {
 	/*Initialise important terms such as t_arrival = exponential r.v, # of
 	pkts in queue = 0, t_departure = t_arrival ( this implies that first
 	time departure will be called as soon as a packet arrives in the
 	queue*/
-	int ticks = 0;
+	unsigned long ticks = 0;
 
 	// Simulation length (in ticks)
-	int simulation_length = 0;
+	unsigned long simulation_length = 0;
 
 	// Average packets per second to generate
-	int avg_number_packets = 0;
+	double avg_number_packets = 0;
 
 	// Length of packets to send (in bits)
-	int packet_length = 0;
+	unsigned long packet_length = 0;
 
 	// Transmission rate (bits per second)
-	int transmission_rate = 0;
+	double transmission_rate = 0;
 
 	// Queue capacity (for M/D/1/K queue)
-	int queue_size = 0;
+	unsigned long queue_size = 0;
 
 	int mode = 0;
 	while (mode != 1 && mode != 2) {
@@ -52,42 +80,14 @@ void main()
 	cin >> avg_number_packets;
 	cout << endl;
 
-	cout << "Length of packet";
+	cout << "Length of packet: ";
 	cin >> packet_length;
 	cout << endl;
 
-	cout << "Transmission rate";
+	cout << "Transmission rate: ";
 	cin >> transmission_rate;
 	cout << endl;
 
 	start_simulation(ticks);
 	compute_performances();
-}
-
-void start_simulation(int ticks)
-{
-	for (unsigned int t = 1; t <= ticks; ++t)
-	{
-		arrival(t); /* call the arrival procedure*/
-		departure(t); /*call the departure procedure*/
-	}
-}
-
-void arrival(int t)
-{
-	/* Generate a packet as per the exponential distribution and insert the
-	packet in the queue (an array or a linked list)*/
-}
-
-void departure(int t)
-{
-	/* Check the queue for the packet, if head of the queue is empty,
-	return 0 else if the queue is non-empty delete the packet from the
-	queue after an elapse of the deterministic service time. */
-}
-
-void compute_performances()
-{
-	/*Calculate and display the results such as average number of packets
-	in queue, average delay in queue and idle time for the server. */
 }
