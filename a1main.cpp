@@ -12,6 +12,7 @@ double average_sojourn_time = 0; // Queueing delay + Service time
 double idle_time = 0;
 double proportion_idle = 0; // Proportion of ticks the server is idle
 double probability_packet_loss = 0; // Probability of packet loss (only relevant for M/D/1/K)
+unsigned long packets_received = 0;
 
 /**
  * Input parameters
@@ -24,45 +25,48 @@ double service_time = 0;
 unsigned long queue_size = 0; // Queue capacity (for M/D/1/K queue)
 
 queue<unsigned long> Queue;
-unsigned long t_arrival, t_departure;
+unsigned long t_arrival = 0, t_departure = 0;
 
 // Random distribution engine
 default_random_engine generator;
 uniform_real_distribution<double> distribution(0, 1);
-unsigned long next_send_tick = 0;
 
 // C++ 11 method of uniform distribution
-void update_next_tick() {
+void update_next_tick(unsigned long t) {
 	double u = distribution(generator);
-	next_send_tick = (-1.0/avg_number_packets)*log(1 - u);
+	t_arrival = ((double)(t)) + ((-1.0/avg_number_packets)*log(1.0 - u) * pow(10, 6));
+	//cout << "T_ARRIVAL: " << t_arrival << endl;
 }
 
 /* Generate a packet as per the exponential distribution and insert the
 packet in the queue (an array or a linked list)*/
-void arrival(int t)
+void arrival(unsigned long t)
 {
-	if (t == next_send_tick) {
-		// TODO: send packet
-		
-		update_next_tick();
+	if (t == t_arrival) {
+		// Send the packet
+		Queue.push(t);
+
+		// Update t_arrival
+		update_next_tick(t);
 	}
 }
 
 /* Check the queue for the packet, if head of the queue is empty,
 return 0 else if the queue is non-empty delete the packet from the
 queue after an elapse of the deterministic service time. */
-int departure(int t)
+int departure(unsigned long t)
 {
 	if (Queue.empty()) {
 		idle_time++;
+		t_departure++; // Not allowed to process packets we haven't received
 		return 0;
 	} else {
-		t_departure--;
-
-		if (t_departure < 0) {
+		if (t >= t_departure) {
 			unsigned long sojourn_time = t - Queue.front() + service_time;
-			average_sojourn_time = average_sojourn_time * ((tick_length - 1) / tick_length) + (sojourn_time / tick_length);
-			t_departure = service_time;
+			packets_received++;
+			average_sojourn_time = average_sojourn_time * (((double)packets_received - 1) / (double)packets_received) + ((double)sojourn_time / packets_received);
+			t_departure = t + service_time;
+			//cout << "T_DEPARTURE: " << t_departure << endl;
 			Queue.pop();
 		}
 
@@ -70,23 +74,26 @@ int departure(int t)
 	}
 }
 
-void start_simulation(int ticks)
+void start_simulation(unsigned long ticks)
 {
 	for (int t = 1; t <= ticks; ++t)
 	{
 		arrival(t); /* call the arrival procedure*/
 		departure(t); /*call the departure procedure*/
-		average_queue_packets = average_queue_packets * ((ticks - 1) / ticks) + (Queue.size() / ticks);
+		average_queue_packets = (double)average_queue_packets * (((double)ticks - 1) / (double)ticks) + ((double)Queue.size() / (double)ticks);
 	}
 }
 
-/*Calculate and display the results such as average number of packets
-in queue, average delay in queue and idle time for the server. */
+/**
+ * Calculate and display the results such as average number of packets
+ * in queue, average delay in queue and idle time for the server.
+ */
 void compute_performances()
 {
-	
 	double Pidle = idle_time / tick_length;
-
+	cout << "Proportion of ticks server idle: " << Pidle << endl;
+	cout << "Average number of packets in queue: " << average_queue_packets<< endl;
+	cout << "Average sojourn time: " << average_sojourn_time << endl;
 }
 
 /** 
@@ -128,20 +135,30 @@ int main()
 	cin >> packet_length;
 	cout << endl;
 
-	cout << "Transmission rate: ";
+	// Mbits/second is equivalent to bits/microsecond
+	cout << "Transmission rate (Mbits/second): ";
 	cin >> transmission_rate;
 	cout << endl;
 
 	service_time = packet_length / transmission_rate;
+	cout << "Service time is: " << service_time << " bits per microsecond" << endl << endl;
+	cout << "============================================" << endl;
 
 	// Start off by determining when to send the first packet
-	update_next_tick();
+	update_next_tick(0);
+
+	// First departure is equal to t_arrival
+	t_departure = t_arrival;
 
 	// Run simulation
 	start_simulation(tick_length);
 
 	// Process and display results
 	compute_performances();
+	
+	cout << "Press Enter to Continue";
+	cin.ignore();
+	cin.ignore();
 
 	return 0;
 }
