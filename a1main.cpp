@@ -20,6 +20,9 @@ unsigned long packet_length = 0; // Length of packets to send (in bits)
 double transmission_rate = 0; // Transmission rate (bits per second)
 unsigned long queue_size = 0; // Queue capacity (for M/D/1/K queue)
 
+queue<unsigned long> Queue;
+unsigned long t_arrival, t_departure;
+
 // Random distribution engine
 default_random_engine generator;
 uniform_real_distribution<double> distribution(0, 1);
@@ -37,12 +40,24 @@ void arrival(int t)
 
 }
 
-/* Check the queue for the packet, if head of the queue is empty,
-return 0 else if the queue is non-empty delete the packet from the
-queue after an elapse of the deterministic service time. */
-void departure(int t)
+int departure(int t)
 {
+	/* Check the queue for the packet, if head of the queue is empty,
+	return 0 else if the queue is non-empty delete the packet from the
+	queue after an elapse of the deterministic service time. */
+	if (Queue.empty()) {
+		idleTime++;
+		return 0;
+	} else {
+		t_departure--;
 
+		if (t_departure < 0) {
+			t_departure = serviceTime;
+			Queue.pop();
+		}
+
+		return 1;
+	}
 }
 
 void start_simulation(int ticks)
@@ -60,7 +75,6 @@ void compute_performances()
 {
 
 }
-
 
 void main()
 {
