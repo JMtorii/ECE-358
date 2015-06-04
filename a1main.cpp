@@ -60,6 +60,8 @@ int departure(int t)
 		t_departure--;
 
 		if (t_departure < 0) {
+			unsigned long sojourn_time = t - Queue.front() + service_time;
+			average_sojourn_time = average_sojourn_time * ((tick_length - 1) / tick_length) + (sojourn_time / tick_length);
 			t_departure = service_time;
 			Queue.pop();
 		}
@@ -74,6 +76,7 @@ void start_simulation(int ticks)
 	{
 		arrival(t); /* call the arrival procedure*/
 		departure(t); /*call the departure procedure*/
+		average_queue_packets = average_queue_packets * ((ticks - 1) / ticks) + (Queue.size() / ticks);
 	}
 }
 
@@ -81,6 +84,8 @@ void start_simulation(int ticks)
 in queue, average delay in queue and idle time for the server. */
 void compute_performances()
 {
+	
+	double Pidle = idle_time / tick_length;
 
 }
 
