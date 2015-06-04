@@ -22,7 +22,7 @@ unsigned long tick_length = 0; // Simulation length (in ticks)
 double avg_number_packets = 0; // Average packets per second to generate
 unsigned long packet_length = 0; // Length of packets to send (in bits)
 double transmission_rate= 0; // Transmission rate (bits per second)
-double service_time = 0; 
+double service_time = 0;
 unsigned long max_queue_size = 0; // Queue capacity (for M/D/1/K queue)
 
 queue<unsigned long> Queue;
@@ -74,7 +74,7 @@ int departure(unsigned long t)
 		return 0;
 	} else {
 		if (t >= t_departure) {
-			unsigned long sojourn_time = t - Queue.front() + service_time;
+			unsigned long sojourn_time = t - Queue.front();
 			packets_received++;
 			average_sojourn_time = average_sojourn_time * (((double)packets_received - 1) / (double)packets_received) + ((double)sojourn_time / packets_received);
 			t_departure = t + service_time;
@@ -119,7 +119,7 @@ void compute_performances()
 	}
 }
 
-/** 
+/**
  * Initialize important terms such as t_arrival = exponential r.v, # of
  * pkts in queue = 0, t_departure = t_arrival ( this implies that first
  * time departure will be called as soon as a packet arrives in the
@@ -174,7 +174,7 @@ int main()
 
 	// Process and display results
 	compute_performances();
-	
+
 	cout << "Press Enter to Continue";
 	cin.ignore();
 	cin.ignore();
