@@ -113,6 +113,9 @@ void main()
 	// Start off by determining when to send the first packet
 	update_next_tick();
 
+	// Run simulation
 	start_simulation(ticks);
+
+	// Process and display results
 	compute_performances();
 }
