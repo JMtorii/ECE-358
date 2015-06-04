@@ -90,7 +90,7 @@ void compute_performances()
  * time departure will be called as soon as a packet arrives in the
  * queue
  */
-void main()
+int main()
 {
 	int mode = 0;
 	while (mode != 1 && mode != 2) {
@@ -137,4 +137,6 @@ void main()
 
 	// Process and display results
 	compute_performances();
+
+	return 0;
 }
