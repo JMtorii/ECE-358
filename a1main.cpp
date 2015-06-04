@@ -12,17 +12,19 @@ double average_sojourn_time = 0; // Queueing delay + Service time
 double idle_time = 0;
 double proportion_idle = 0; // Proportion of ticks the server is idle
 double probability_packet_loss = 0; // Probability of packet loss (only relevant for M/D/1/K)
+unsigned long packets_sent = 0;
 unsigned long packets_received = 0;
 
 /**
  * Input parameters
  */
+int mode = 0; // Mode (equals "2" if queue has a limited length, "1" for normal)
 unsigned long tick_length = 0; // Simulation length (in ticks)
 double avg_number_packets = 0; // Average packets per second to generate
 unsigned long packet_length = 0; // Length of packets to send (in bits)
-double transmission_rate = 0; // Transmission rate (bits per second)
-double service_time = 0;
-unsigned long queue_size = 0; // Queue capacity (for M/D/1/K queue)
+double transmission_rate= 0; // Transmission rate (bits per second)
+double service_time = 0; 
+unsigned long max_queue_size = 0; // Queue capacity (for M/D/1/K queue)
 
 queue<unsigned long> Queue;
 unsigned long t_arrival = 0, t_departure = 0;
@@ -44,7 +46,14 @@ void arrival(unsigned long t)
 {
 	if (t == t_arrival) {
 		// Send the packet
-		Queue.push(t);
+		packets_sent++;
+
+		if (mode == 2 && Queue.size() >= max_queue_size) {
+			// do nothing
+		}
+		else {
+			Queue.push(t);
+		}
 
 		// Update t_arrival
 		update_next_tick(t);
@@ -92,8 +101,17 @@ void compute_performances()
 {
 	double Pidle = idle_time / tick_length;
 	cout << "Proportion of ticks server idle: " << Pidle << endl;
-	cout << "Average number of packets in queue: " << average_queue_packets<< endl;
+	cout << "Average number of packets in queue: " << average_queue_packets << endl;
 	cout << "Average sojourn time: " << average_sojourn_time << endl;
+
+	if (mode == 2) {
+		if (packets_sent == 0) {
+			cout << "No packets received." << endl;
+		}
+		else {
+			cout << "Probability of packet loss: " << ((double)packets_sent - packets_received) / (double)packets_sent << endl;
+		}
+	}
 }
 
 /** 
@@ -104,7 +122,6 @@ void compute_performances()
  */
 int main()
 {
-	int mode = 0;
 	while (mode != 1 && mode != 2) {
 		cout << "Which type of queue would you like to simulate?  Select 1 for M/D/1 or 2 for M/D/1/K: ";
 		cin >> mode;
@@ -114,12 +131,9 @@ int main()
 		}
 	}
 
-	if (mode == 1) {
-		queue_size = -1;
-	}
-	else {
+	if (mode == 2) {
 		cout << "Capacity of queue: ";
-		cin >> queue_size;
+		cin >> max_queue_size;
 		cout << endl;
 	}
 
