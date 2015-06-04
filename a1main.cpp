@@ -2,6 +2,14 @@
 
 using namespace std;
 
+/**
+ * Output metrics to be returned after running the system
+ */
+double average_queue_packets = 0; // Average number of packets in the queue
+double average_sojourn_time = 0; // Queueing delay + Service time
+double proportion_idle = 0; // Proportion of ticks the server is idle
+double probability_packet_loss = 0; // Probability of packet loss (only relevant for M/D/1/K)
+
 void arrival(int t)
 {
 	/* Generate a packet as per the exponential distribution and insert the
@@ -36,6 +44,8 @@ void main()
 	pkts in queue = 0, t_departure = t_arrival ( this implies that first
 	time departure will be called as soon as a packet arrives in the
 	queue*/
+
+
 	unsigned long ticks = 0;
 
 	// Simulation length (in ticks)
