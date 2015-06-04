@@ -1,4 +1,5 @@
 #include <iostream>
+#include <random>
 
 using namespace std;
 
@@ -10,17 +11,38 @@ double average_sojourn_time = 0; // Queueing delay + Service time
 double proportion_idle = 0; // Proportion of ticks the server is idle
 double probability_packet_loss = 0; // Probability of packet loss (only relevant for M/D/1/K)
 
-void arrival(int t)
-{
-	/* Generate a packet as per the exponential distribution and insert the
-	packet in the queue (an array or a linked list)*/
+/**
+ * Input parameters
+ */
+unsigned long ticks = 0; // Simulation length (in ticks)
+double avg_number_packets = 0; // Average packets per second to generate
+unsigned long packet_length = 0; // Length of packets to send (in bits)
+double transmission_rate = 0; // Transmission rate (bits per second)
+unsigned long queue_size = 0; // Queue capacity (for M/D/1/K queue)
+
+// Random distribution engine
+default_random_engine generator;
+uniform_real_distribution<double> distribution(0, 1);
+
+// C++ 11 method of uniform distribution
+double calculate_distribution() {
+	double u = distribution(generator);
+	return (-1.0/avg_number_packets)*log(1 - u);
 }
 
+/* Generate a packet as per the exponential distribution and insert the
+packet in the queue (an array or a linked list)*/
+void arrival(int t)
+{
+
+}
+
+/* Check the queue for the packet, if head of the queue is empty,
+return 0 else if the queue is non-empty delete the packet from the
+queue after an elapse of the deterministic service time. */
 void departure(int t)
 {
-	/* Check the queue for the packet, if head of the queue is empty,
-	return 0 else if the queue is non-empty delete the packet from the
-	queue after an elapse of the deterministic service time. */
+
 }
 
 void start_simulation(int ticks)
@@ -32,11 +54,13 @@ void start_simulation(int ticks)
 	}
 }
 
+/*Calculate and display the results such as average number of packets
+in queue, average delay in queue and idle time for the server. */
 void compute_performances()
 {
-	/*Calculate and display the results such as average number of packets
-	in queue, average delay in queue and idle time for the server. */
+
 }
+
 
 void main()
 {
@@ -44,21 +68,6 @@ void main()
 	pkts in queue = 0, t_departure = t_arrival ( this implies that first
 	time departure will be called as soon as a packet arrives in the
 	queue*/
-
-	// Simulation length (in ticks)
-	unsigned long ticks = 0;
-
-	// Average packets per second to generate
-	double avg_number_packets = 0;
-
-	// Length of packets to send (in bits)
-	unsigned long packet_length = 0;
-
-	// Transmission rate (bits per second)
-	double transmission_rate = 0;
-
-	// Queue capacity (for M/D/1/K queue)
-	unsigned long queue_size = 0;
 
 	int mode = 0;
 	while (mode != 1 && mode != 2) {
@@ -95,6 +104,7 @@ void main()
 	cin >> transmission_rate;
 	cout << endl;
 
+	calculate_distribution();
 	start_simulation(ticks);
 	compute_performances();
 }
