@@ -1,3 +1,4 @@
+#include <iostream>
 
 using namespace std;
 
@@ -8,6 +9,56 @@ void main()
 	time departure will be called as soon as a packet arrives in the
 	queue*/
 	int ticks = 0;
+
+	// Simulation length (in ticks)
+	int simulation_length = 0;
+
+	// Average packets per second to generate
+	int avg_number_packets = 0;
+
+	// Length of packets to send (in bits)
+	int packet_length = 0;
+
+	// Transmission rate (bits per second)
+	int transmission_rate = 0;
+
+	// Queue capacity (for M/D/1/K queue)
+	int queue_size = 0;
+
+	int mode = 0;
+	while (mode != 1 && mode != 2) {
+		cout << "Which type of queue would you like to simulate?  Select 1 for M/D/1 or 2 for M/D/1/K: ";
+		cin >> mode;
+		cout << endl;
+		if (mode != 1 && mode != 2) {
+			cout << "Please enter '1' or '2'." << endl;
+		}
+	}
+
+	if (mode == 1) {
+		queue_size = -1;
+	}
+	else {
+		cout << "Capacity of queue: ";
+		cin >> queue_size;
+		cout << endl;
+	}
+
+	cout << "Length of simulation, in ticks: ";
+	cin >> simulation_length;
+	cout << endl;
+
+	cout << "Average number of packets per second generated/arrived: ";
+	cin >> avg_number_packets;
+	cout << endl;
+
+	cout << "Length of packet";
+	cin >> packet_length;
+	cout << endl;
+
+	cout << "Transmission rate";
+	cin >> transmission_rate;
+	cout << endl;
 
 	start_simulation(ticks);
 	compute_performances();
