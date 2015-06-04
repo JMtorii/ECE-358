@@ -79,10 +79,6 @@ void start_simulation(int ticks)
 in queue, average delay in queue and idle time for the server. */
 void compute_performances()
 {
-double average_queue_packets = 0; // Average number of packets in the queue
-double average_sojourn_time = 0; // Queueing delay + Service time
-double proportion_idle = 0; // Proportion of ticks the server is idle
-double probability_packet_loss = 0; // Probability of packet loss (only relevant for M/D/1/K)
 
 }
 
