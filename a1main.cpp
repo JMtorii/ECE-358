@@ -23,18 +23,23 @@ unsigned long queue_size = 0; // Queue capacity (for M/D/1/K queue)
 // Random distribution engine
 default_random_engine generator;
 uniform_real_distribution<double> distribution(0, 1);
+unsigned long next_send_tick = 0;
 
 // C++ 11 method of uniform distribution
-double calculate_distribution() {
+void update_next_tick() {
 	double u = distribution(generator);
-	return (-1.0/avg_number_packets)*log(1 - u);
+	next_send_tick = (-1.0/avg_number_packets)*log(1 - u);
 }
 
 /* Generate a packet as per the exponential distribution and insert the
 packet in the queue (an array or a linked list)*/
 void arrival(int t)
 {
-
+	if (t == next_send_tick) {
+		// TODO: send packet
+		
+		update_next_tick();
+	}
 }
 
 /* Check the queue for the packet, if head of the queue is empty,
@@ -62,13 +67,14 @@ void compute_performances()
 }
 
 
+/** 
+ * Initialize important terms such as t_arrival = exponential r.v, # of
+ * pkts in queue = 0, t_departure = t_arrival ( this implies that first
+ * time departure will be called as soon as a packet arrives in the
+ * queue
+ */
 void main()
 {
-	/*Initialise important terms such as t_arrival = exponential r.v, # of
-	pkts in queue = 0, t_departure = t_arrival ( this implies that first
-	time departure will be called as soon as a packet arrives in the
-	queue*/
-
 	int mode = 0;
 	while (mode != 1 && mode != 2) {
 		cout << "Which type of queue would you like to simulate?  Select 1 for M/D/1 or 2 for M/D/1/K: ";
@@ -104,7 +110,9 @@ void main()
 	cin >> transmission_rate;
 	cout << endl;
 
-	calculate_distribution();
+	// Start off by determining when to send the first packet
+	update_next_tick();
+
 	start_simulation(ticks);
 	compute_performances();
 }
