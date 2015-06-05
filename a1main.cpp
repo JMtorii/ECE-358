@@ -1,6 +1,7 @@
 #include <iostream>
 #include <queue>
 #include <random>
+#include <time.h>
 
 using namespace std;
 
@@ -11,29 +12,29 @@ double average_queue_packets = 0; // Average number of packets in the queue
 double average_sojourn_time = 0; // Queueing delay + Service time
 double idle_time = 0;
 double proportion_idle = 0; // Proportion of ticks the server is idle
-unsigned long packets_sent = 0;
-unsigned long packets_received = 0;
+unsigned long long packets_sent = 0;
+unsigned long long packets_received = 0;
 
 /**
  * Input parameters
  */
 int mode = 0; // Mode (equals "2" if queue has a limited length, "1" for normal)
-unsigned long tick_length = 0; // Simulation length (in ticks)
+unsigned long long tick_length = 0; // Simulation length (in ticks)
 double avg_number_packets = 0; // Average packets per second to generate
-unsigned long packet_length = 0; // Length of packets to send (in bits)
+unsigned long long packet_length = 0; // Length of packets to send (in bits)
 double transmission_rate= 0; // Transmission rate (bits per second)
 double service_time = 0;
-unsigned long max_queue_size = 0; // Queue capacity (for M/D/1/K queue)
+unsigned long long max_queue_size = 0; // Queue capacity (for M/D/1/K queue)
 
-queue<unsigned long> Queue;
-unsigned long t_arrival = 0, t_departure = 0;
+queue<unsigned long long> Queue;
+unsigned long long t_arrival = 0, t_departure = 0;
 
 // Random distribution engine
-default_random_engine generator;
+default_random_engine generator((unsigned int)time(0));
 uniform_real_distribution<double> distribution(0, 1);
 
 // C++ 11 method of uniform distribution
-void update_next_tick(unsigned long t) {
+void update_next_tick(unsigned long long t) {
 	double u = distribution(generator);
 	t_arrival = ((double)(t)) + ((-1.0/avg_number_packets)*log(1.0 - u) * pow(10, 6));
 	//cout << "T_ARRIVAL: " << t_arrival << endl;
@@ -43,7 +44,7 @@ void update_next_tick(unsigned long t) {
  * Generate a packet as per the exponential distribution and insert the
  * packet in the queue (an array or a linked list)
  */
-void arrival(unsigned long t)
+void arrival(unsigned long long t)
 {
 	if (t == t_arrival) {
 		// Send the packet
@@ -66,7 +67,7 @@ void arrival(unsigned long t)
  * return 0 else if the queue is non-empty delete the packet from the
  * queue after an elapse of the deterministic service time.
  */
-int departure(unsigned long t)
+int departure(unsigned long long t)
 {
 	if (Queue.empty()) {
 		idle_time++;
@@ -74,7 +75,7 @@ int departure(unsigned long t)
 		return 0;
 	} else {
 		if (t >= t_departure) {
-			unsigned long sojourn_time = t - Queue.front();
+			unsigned long long sojourn_time = t - Queue.front();
 			packets_received++;
 			average_sojourn_time = average_sojourn_time * (((double)packets_received - 1) / (double)packets_received) + ((double)sojourn_time / packets_received);
 			t_departure = t + service_time;
@@ -86,7 +87,7 @@ int departure(unsigned long t)
 	}
 }
 
-void start_simulation(unsigned long ticks)
+void start_simulation(unsigned long long ticks)
 {
 	for (int t = 1; t <= ticks; ++t)
 	{
@@ -127,6 +128,8 @@ void compute_performances()
  */
 int main()
 {
+    cout << "sizeOf ulong: " << sizeof(unsigned long) << endl;
+    cout << "sizeOf ulonglong: " << sizeof(unsigned long long) << endl;
 	while (mode != 1 && mode != 2) {
 		cout << "Which type of queue would you like to simulate?  Select 1 for M/D/1 or 2 for M/D/1/K: ";
 		cin >> mode;
